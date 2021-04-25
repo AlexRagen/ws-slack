@@ -10,9 +10,9 @@ from slack_bolt.adapter.fastapi import SlackRequestHandler
 
 from slack_actions import *
 from ws_actions import *
-from ws_sdk import ws_utilities, ws_constants
+from ws_sdk import ws_utilities, ws_constants, ws_errors
 import reports
-
+import json
 # from fastapi.staticfiles import StaticFiles
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
@@ -26,7 +26,7 @@ config = json.loads(f.read())
 
 app = App()
 app_handler = SlackRequestHandler(app)
-api = FastAPI(title="WS For Slack")
+api = FastAPI(title="WS4S")
 # api.mount("/static", StaticFiles(directory="static"), name="static")
 
 
@@ -129,24 +129,23 @@ def call_report(report_name, conf_dict, ws_connector):
 def catch_all(report_name: str,
               pipeline_req: PipeLineRequest,
               request: Request):
-    if reports.is_valid_ws_conn_details(pipeline_req.__dict__):
+    try:
         ret = call_report(report_name=report_name,
                           conf_dict=pipeline_req.__dict__,
                           ws_connector=WS(url=pipeline_req.__dict__['ws_url'],
                                           user_key=pipeline_req.__dict__['ws_user_key'],
                                           token=pipeline_req.__dict__['ws_org_token']))
-    else:
-        logging.error("Incorrect or WS connection details")
-        ret = "Incorrect or WS connection details"
+    except ws_errors.MissingTokenError as e:
+        ret = e.message
 
     return ret
 
 
-def conf_validated():
+def load_config():
+    global config
     for key in config['MandatoryEnvVars']:
         try:
-            val = os.environ[key]
-            logging.debug(f"Started with env variables: {key}={val}")
+            config['key'] = os.environ[key]
         except KeyError:
             logging.error(f"Missing environment variable: {key}")
             return False
@@ -155,5 +154,5 @@ def conf_validated():
 
 
 if __name__ == "__main__":
-    if conf_validated():
+    if load_config():
         uvicorn.run(app="app:api", host="0.0.0.0", port=8000, reload=False, debug=True)

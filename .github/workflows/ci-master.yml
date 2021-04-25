@@ -1,15 +1,23 @@
-name: WS Slack integration
-on: [push]
-
+name: WS Slack integration - Master
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - '*'
+  schedule:
+    - cron: '0 4 * * 6'
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
-
+        python-version: [3.6, 3.7, 3.8]
     steps:
       - uses: actions/checkout@v2
+      - uses: UnicornGlobal/trufflehog-actions-scan@master
+        with:
+          branch: ${{ github.head_ref }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -19,12 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8
           pip install -r requirements.txt
-      - name: Run Yelp's detect-secrets
-        uses: RobertFischer/detect-secrets-action@v2.0.0
-      - name: Commit back .secrets.baseline (if it was missing)
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "build(detect-secrets): Commit the newly-generated .secrets.baseline file"
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names

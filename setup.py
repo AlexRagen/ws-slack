@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='ws-slack',
-    version='0.0.1',
+    version='0.1.0',
     url='https://github.com/whitesource-ps/ws-slack',
     license='LICENSE.txt',
     packages=setuptools.find_packages(),

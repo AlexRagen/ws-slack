@@ -1,9 +1,11 @@
-import json
 import logging
 import os
 
 from ws_sdk.web import WS
+import logging
+import os
 
+from ws_sdk.web import WS
 
 ws_cust_connector = WS(url=os.environ.get('WS_URL'),
                        user_key=os.environ.get('WS_USER_KEY'),

@@ -15,7 +15,6 @@ class Report(ABC):
         self.config = config
         self.ws_connector = ws_connector
         self.execute() if is_valid_config(self.ws_conn_details,
-                                          self.mandatory_values,
                                           self.config['MandatoryWsConnProp'] + self.MANDATORY_PROPS) else KeyError
 
     def create_report_metadata(self) -> tuple:
