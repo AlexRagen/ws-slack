@@ -1,9 +1,9 @@
 import json
 import logging
 from abc import ABC
-import slack_actions
+from ws_slack import slack_actions
 from ws_sdk.web import WS
-import slack_format
+from ws_slack import slack_format
 
 
 class Report(ABC):
