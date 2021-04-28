@@ -20,26 +20,35 @@ def get_slack_user_data(user_id: str):
         logging.exception("Error getting user")
 
 
-def get_slack_channels() -> list:
+def get_all_slack_channels() -> list:
     try:
         return client.conversations_list().__dict__['data']['channels']
     except SlackApiError:
         logging.exception(f"Error fetching channels")
 
 
-def is_slack_channel_exists(channel_name) -> bool:
-    channel_exist = False
-    channels = get_slack_channels()
+def get_slack_channel(channel_name) -> dict:
+    channels = get_all_slack_channels()
     for cur_channel in channels:
         if channel_name == cur_channel['name']:
-            channel_exist = True
             logging.debug(f"Channel {channel_name} found")
-            break
+            return cur_channel
 
-    if not channel_exist:
-        logging.debug(f"Channel {channel_name} was not found")
+    logging.debug(f"Channel {channel_name} was not found")
 
-    return channel_exist
+
+def is_slack_channel_exists(channel_name) -> bool:
+    return True if get_slack_channel(channel_name) else False
+
+
+def is_in_slack_channel(channel_name) -> bool:
+    channel = get_slack_channel(channel_name)
+    return channel['is_member']
+
+
+def join_channel(channel_name):
+    channel_id = get_slack_channel(channel_name)['id']
+    client.conversations_join(channel=channel_id)
 
 
 def create_channel(channel_name, create_private=False):  # TODO CHANGE TO PRIVATE CHANNELS. CURRENTLY GET LIST THEM: https://stackoverflow.com/questions/53736333/slack-conversations-list-method-does-not-list-all-the-channels
@@ -55,6 +64,8 @@ def create_channel(channel_name, create_private=False):  # TODO CHANGE TO PRIVAT
 def send_to_slack(channel, block):
     if not is_slack_channel_exists(channel):
         create_channel(channel)
+    if not is_in_slack_channel(channel):
+        join_channel(channel)
     try:
         client.chat_postMessage(channel=channel, blocks=block, text=block)
     except SlackApiError:

@@ -1,18 +1,19 @@
 import inspect
+import os
 import sys
 from typing import Optional
-
+import logging
 import uvicorn
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 
-from slack_actions import *
-from ws_actions import *
-from ws_sdk import ws_utilities, ws_constants
-import reports
-
+from ws_slack import slack_actions
+from ws_slack import ws_actions
+from ws_sdk import ws_utilities, ws_constants, ws_errors
+from ws_slack import reports
+import json
 # from fastapi.staticfiles import StaticFiles
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
@@ -21,19 +22,17 @@ logging.getLogger('slack_bolt').setLevel(logging.INFO)
 logging.getLogger('slack_sdk').setLevel(logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.INFO)
 
-f = open("config.json", 'r')
-config = json.loads(f.read())
-
+ws_resource = None
 app = App()
 app_handler = SlackRequestHandler(app)
-api = FastAPI(title="WS For Slack")
+api = FastAPI(title="WS4S",  swagger_static={"favicon": "favicon.png"})
 # api.mount("/static", StaticFiles(directory="static"), name="static")
-
-
+f = open("config.json", 'r')
+config = json.loads(f.read())
 HOW_TO_USE_SLASH_BLOCK = f"""Usage: /ws4s <report name> <scope token>
-                    Currently supported reports: {config['Reports']}
-                    To get Scope tokens: /ws4s tokens <scope name> 
-                    """                                                 # TODO MAKE THIS NICE BLOCK
+                          Currently supported reports: {config['Reports']}
+                          To get Scope tokens: /ws4s tokens <scope name> 
+                          """  # TODO MAKE THIS NICER
 
 
 class PipeLineRequest(BaseModel):
@@ -44,12 +43,13 @@ class PipeLineRequest(BaseModel):
 
 
 def authenticate_user(user_id: str):
-    slack_email = get_slack_user_email(user_id)
+    slack_email = slack_actions.get_slack_user_email(user_id)
 
-    return is_email_exists(slack_email)
+    return ws_actions.WsResources.is_email_exists_in_ws(slack_email)
 
 
 def parse_slash_syntax(message: dict) -> str:
+    global config
     text = message.get('text')
     ret = ""
     logging.debug(f"Entered syntax: '{text}'")
@@ -58,7 +58,7 @@ def parse_slash_syntax(message: dict) -> str:
     else:
         command_list = list(message['text'].split())
         if len(command_list) == 2 and command_list[0].lower() == 'tokens':        # Retrieving tokens from report name
-            scopes = ws_cust_connector.get_scopes(name=command_list[1])
+            scopes = ws_actions.WsResources.ws_cust_connector.get_scopes(name=command_list[1])
             if len(scopes) == 0:
                 ret = f"No Product or Project with the name: '{command_list[1]}' was found. Note that search is case sensitive"
                 logging.debug(f"No scopes were found with name: {command_list[1]}")
@@ -77,7 +77,7 @@ def parse_slash_syntax(message: dict) -> str:
 
             ret = call_report(report_name=command_list[0],
                               conf_dict={"ws_scope_token": command_list[1]},
-                              ws_connector=ws_cust_connector)
+                              ws_connector=ws_actions.WsResources.ws_cust_connector)
         else:
             ret = f"Entered syntax: '{text}' \n {HOW_TO_USE_SLASH_BLOCK}"
             logging.error(f"Invalid slash syntax: '{text}'")
@@ -109,6 +109,7 @@ def hello():
 
 
 def call_report(report_name, conf_dict, ws_connector):
+    global config
     if report_name not in config['Reports']:
         ret = f"Unsupported path: {report_name}"
     else:
@@ -129,24 +130,27 @@ def call_report(report_name, conf_dict, ws_connector):
 def catch_all(report_name: str,
               pipeline_req: PipeLineRequest,
               request: Request):
-    if reports.is_valid_ws_conn_details(pipeline_req.__dict__):
+    try:
         ret = call_report(report_name=report_name,
                           conf_dict=pipeline_req.__dict__,
-                          ws_connector=WS(url=pipeline_req.__dict__['ws_url'],
-                                          user_key=pipeline_req.__dict__['ws_user_key'],
-                                          token=pipeline_req.__dict__['ws_org_token']))
-    else:
-        logging.error("Incorrect or WS connection details")
-        ret = "Incorrect or WS connection details"
+                          ws_connector=ws_actions.WS(url=pipeline_req.__dict__['ws_url'],
+                          user_key=pipeline_req.__dict__['ws_user_key'],
+                          token=pipeline_req.__dict__['ws_org_token']))
+    except ws_errors.MissingTokenError as e:
+        ret = e.message
 
     return ret
 
 
-def conf_validated():
+def init():
+    global ws_resource
+    ws_resource = ws_actions.WsResources()
+
+def check_config():
+    global config
     for key in config['MandatoryEnvVars']:
         try:
-            val = os.environ[key]
-            logging.debug(f"Started with env variables: {key}={val}")
+            config['key'] = os.environ[key]
         except KeyError:
             logging.error(f"Missing environment variable: {key}")
             return False
@@ -155,5 +159,6 @@ def conf_validated():
 
 
 if __name__ == "__main__":
-    if conf_validated():
+    init()
+    if check_config():
         uvicorn.run(app="app:api", host="0.0.0.0", port=8000, reload=False, debug=True)

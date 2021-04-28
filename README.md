@@ -49,7 +49,7 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
         * App Display Name:
             * Display Name: WS4S
             * Default username: ws4s
-
+1. In Slack application, add WS4S by choosing WS4S in Apps.
     
 ## Installation
 Install the container from DockerHub: `docker pull ws-slack` **[TBD]**
