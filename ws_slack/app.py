@@ -22,10 +22,10 @@ logging.getLogger('slack_bolt').setLevel(logging.INFO)
 logging.getLogger('slack_sdk').setLevel(logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.INFO)
 
-ws_resource = config = HOW_TO_USE_SLASH_BLOCK = None
+ws_resource = None
 app = App()
 app_handler = SlackRequestHandler(app)
-api = FastAPI(title="WS4S")
+api = FastAPI(title="WS4S",  swagger_static={"favicon": "favicon.png"})
 # api.mount("/static", StaticFiles(directory="static"), name="static")
 f = open("config.json", 'r')
 config = json.loads(f.read())
@@ -45,7 +45,7 @@ class PipeLineRequest(BaseModel):
 def authenticate_user(user_id: str):
     slack_email = slack_actions.get_slack_user_email(user_id)
 
-    return ws_actions.is_email_exists_in_ws(slack_email)
+    return ws_actions.WsResources.is_email_exists_in_ws(slack_email)
 
 
 def parse_slash_syntax(message: dict) -> str:
@@ -58,7 +58,7 @@ def parse_slash_syntax(message: dict) -> str:
     else:
         command_list = list(message['text'].split())
         if len(command_list) == 2 and command_list[0].lower() == 'tokens':        # Retrieving tokens from report name
-            scopes = ws_actions.ws_cust_connector.get_scopes(name=command_list[1])
+            scopes = ws_actions.WsResources.ws_cust_connector.get_scopes(name=command_list[1])
             if len(scopes) == 0:
                 ret = f"No Product or Project with the name: '{command_list[1]}' was found. Note that search is case sensitive"
                 logging.debug(f"No scopes were found with name: {command_list[1]}")
@@ -77,7 +77,7 @@ def parse_slash_syntax(message: dict) -> str:
 
             ret = call_report(report_name=command_list[0],
                               conf_dict={"ws_scope_token": command_list[1]},
-                              ws_connector=ws_actions.ws_cust_connector)
+                              ws_connector=ws_actions.WsResources.ws_cust_connector)
         else:
             ret = f"Entered syntax: '{text}' \n {HOW_TO_USE_SLASH_BLOCK}"
             logging.error(f"Invalid slash syntax: '{text}'")
