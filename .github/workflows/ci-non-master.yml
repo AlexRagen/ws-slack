@@ -54,6 +54,6 @@ jobs:
         with:
           repository: whitesourcetools/ws4s
           push: true
-          tags: ${{ steps.prep.outputs.tags }}
+          tags: whitesourcetools/ws4s:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
