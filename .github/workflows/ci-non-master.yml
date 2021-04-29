@@ -34,7 +34,7 @@ jobs:
         run: python -m unittest
       - name: get Python Ver
         run: |
-          python_version=$(cat .python-version)
+          python_version=$(python setup.py --version)
           echo "python_version=${python_version}"
           if [[ ${python_version} == 3.6 ]]
             echo "GREAT SUCCESS"
