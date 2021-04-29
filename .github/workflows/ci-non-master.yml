@@ -34,8 +34,8 @@ jobs:
         run: python -m unittest
       - name: get Python Ver
         run: |
-          python_version=$(python --version)
+          python_version=$(python -V | tr -d 'Python ')
           echo "python_version=${python_version}"
-          if [[ ${python_version} == 3.6 ]] ; then
+          if [[ ${python_version} == 3.8* ]] ; then
             echo "GREAT SUCCESS"
           fi
