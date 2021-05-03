@@ -1,7 +1,7 @@
 ![Logo](https://whitesource-resources.s3.amazonaws.com/ws-sig-images/Whitesource_Logo_178x44.png)  
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub release](https://img.shields.io/github/v/release/whitesource-ps/ws-slack)](https://github.com/whitesource-ps/ws-slack/releases/latest)
+![Docker Image Version (latest by date)](https://img.shields.io/docker/v/whitesourcetools/ws4s)
 [![WS Slack Integration](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci.yml/badge.svg)](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci.yml)
 [![Python 3.6](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Blue_Python_3.6%2B_Shield_Badge.svg/86px-Blue_Python_3.6%2B_Shield_Badge.svg.png)](https://www.python.org/downloads/release/python-360/)
 
@@ -26,9 +26,7 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
         "key": "<value>"...
        }
     ```
-
 #### Accepting Slack slash commands (/ws4s):
-    
 * Supported commands:
 
     ```
@@ -37,7 +35,6 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
     ```
 
 ## Prerequisites
-1. Python WS-SDK (installed in the Docker container)
 1. Create Custom App in [Slack API](https://api.slack.com/apps?new_app=1) with the following permissions:
     * Slash commands:
         * Command: /ws4s
@@ -51,13 +48,9 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
             * Default username: ws4s
 1. In Slack application, add WS4S by choosing WS4S in Apps.
     
-## Installation
-Install the container from DockerHub: `docker pull ws-slack` **[TBD]**
-
-OR 
-Download and build ws-slack from source.
-
-## Docker run instructions:
+## Docker Installation and Run options
+* Install the container from DockerHub: `docker pull ws-slack` **[TBD]**
 ```
-docker run -p 8000:8000 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -eSLACK_SIGNING_SECRET=<SECRET> ws-slack --name <CONTAINER_NAME>
+docker pull whitesourcetools/ws4s
+docker run --name ws4s -p 8000:8000 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -e SLACK_SIGNING_SECRET=<SECRET> whitesourcetools/ws4s
 ```
