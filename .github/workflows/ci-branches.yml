@@ -1,4 +1,4 @@
-name: WS Slack integration - Master
+name: WS Slack integration
 on:
   push:
     branches:
