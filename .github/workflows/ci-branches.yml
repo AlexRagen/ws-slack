@@ -2,9 +2,7 @@ name: WS Slack integration - Master
 on:
   push:
     branches:
-      - 'master'
-    tags:
-      - '*'
+      - '**'
   schedule:
     - cron: '0 4 * * *'
 jobs:
