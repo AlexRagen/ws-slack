@@ -1,8 +1,6 @@
 name: WS Slack integration - Deploy to DockerHub
 on:
   push:
-    branches:
-      - master
     tags:
       - 'v*'
 jobs:
