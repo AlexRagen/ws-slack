@@ -32,10 +32,4 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Unittesting
         run: python -m unittest
-      - name: get Python Ver
-        run: |
-          python_version=$(cat .python-version)
-          echo "python_version=${python_version}"
-          if [[ ${python_version} == 3.6 ]]
-            echo "GREAT SUCCESS"
-          fi
+
