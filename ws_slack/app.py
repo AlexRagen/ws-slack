@@ -146,6 +146,7 @@ def init():
     global ws_resource
     ws_resource = ws_actions.WsResources()
 
+
 def check_config():
     global config
     for key in config['MandatoryEnvVars']:

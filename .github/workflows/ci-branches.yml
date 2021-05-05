@@ -1,10 +1,8 @@
-name: WS Slack integration - Master
+name: WS Slack integration
 on:
   push:
     branches:
-      - 'master'
-    tags:
-      - '*'
+      - '**'
   schedule:
     - cron: '0 4 * * *'
 jobs:
@@ -35,3 +33,4 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Unittesting
         run: python -m unittest
+

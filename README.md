@@ -52,5 +52,5 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
 * Install the container from DockerHub: `docker pull ws-slack` **[TBD]**
 ```
 docker pull whitesourcetools/ws4s
-docker run --name ws4s -p 8000:8000 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -e SLACK_SIGNING_SECRET=<SECRET> whitesourcetools/ws4s
+docker run --name ws4s -p 8000:8000 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -e SLACK_SIGNING_SECRET=<SECRET> -e  WS_URL=<WS_ENV> -e WS_ORG_TOKEN=<ORG_TOKEN> -e WS_USER_KEY=<USER_KEY> whitesourcetools/ws4s
 ```
