@@ -31,6 +31,8 @@ jobs:
         with:
           push: true
           tags: ${{ steps.prep.outputs.tags }}
+      - name: Checkout for repo description
+        uses: actions/checkout@v2
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v2
         with:
