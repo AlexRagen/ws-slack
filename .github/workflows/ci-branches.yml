@@ -39,4 +39,3 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: whitesourcetools/ws4s
-          short-description: ${{ github.event.repository.description }}
