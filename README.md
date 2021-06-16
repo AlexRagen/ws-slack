@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/whitesourcetools/ws4s)
-[![WS Slack Integration](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci.yml/badge.svg)](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci.yml)
+[![WS Slack Integration](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci-docker.yml/badge.svg)](https://github.com/whitesource-ps/ws-slack/actions/workflows/ci-docker.yml)
 [![Python 3.6](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Blue_Python_3.6%2B_Shield_Badge.svg/86px-Blue_Python_3.6%2B_Shield_Badge.svg.png)](https://www.python.org/downloads/release/python-360/)
 
 # WhiteSource Slack Integration 
@@ -49,8 +49,10 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
 1. In Slack application, add WS4S by choosing WS4S in Apps.
     
 ## Docker Installation and Run options
-* Install the container from DockerHub: `docker pull ws-slack` **[TBD]**
-```
+* Install the container from DockerHub:
+```shell
 docker pull whitesourcetools/ws4s
-docker run --name ws4s -p 8000:8000 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -e SLACK_SIGNING_SECRET=<SECRET> -e  WS_URL=<WS_ENV> -e WS_ORG_TOKEN=<ORG_TOKEN> -e WS_USER_KEY=<USER_KEY> whitesourcetools/ws4s
+docker run --name ws4s -p 8432:8432 -e SLACK_BOT_TOKEN=xoxb-<TOKEN> -e SLACK_SIGNING_SECRET=<SECRET> -e \ 
+WS_URL=<WS_ENV> -e WS_ORG_TOKEN=<ORG_TOKEN> -e WS_USER_KEY=<USER_KEY> -v certificate:/secrets \ 
+-e SSL_CERTFILE_PASSWORD=<SSL CERT PASSWORD> whitesourcetools/ws4s
 ```

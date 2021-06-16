@@ -1,5 +1,6 @@
 ## Content
-* Add reports
+* High SECURITY_VULNERABILITY report
+* All REJECTED_BY_POLICY_RESOURCE report
 
 ## UI
 * Add welcome HTML screen
@@ -8,6 +9,7 @@
 * Search partial scope names    
 
 ## General
-* Unitest
+* Ability to receive new alerts only based on WebHooks push or periodic   
+* Unittest
 * CI
-* Finish README.md
+* Finish Slack permission list in README.md
