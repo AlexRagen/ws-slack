@@ -151,7 +151,7 @@ def check_config():
     global config
     for key in config['MandatoryEnvVars']:
         try:
-            config['key'] = os.environ[key]
+            config[key.lower()] = os.environ[key]
         except KeyError:
             logging.error(f"Missing environment variable: {key}")
             return False
@@ -162,4 +162,7 @@ def check_config():
 if __name__ == "__main__":
     init()
     if check_config():
-        uvicorn.run(app="app:api", host="0.0.0.0", port=8000, reload=False, debug=True)
+        uvicorn.run(app="app:api", host="0.0.0.0", port=8432, reload=False, debug=False,
+                    ssl_keyfile=config['ssl_keyfile'], ssl_certfile=config['ssl_certfile'], ssl_keyfile_password=config['ssl_certfile_password'])
+    else:
+        logging.error("Error starting Uvicorn")

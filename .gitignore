@@ -21,3 +21,5 @@ target/
 # Excluded Files - Naming Convention
 local-env.*
 /venv/
+/out/
+/ws_slack/tests/http-client.private.env.json

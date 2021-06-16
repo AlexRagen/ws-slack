@@ -13,7 +13,7 @@ jobs:
           DOCKER_IMAGE=whitesourcetools/ws4s
           VERSION=latest
           TAGS="${DOCKER_IMAGE}:${VERSION}"
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
             TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
           fi
@@ -33,3 +33,11 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: confluence-markdown-sync
+        uses: cupcakearmy/confluence-markdown-sync@v1
+        with:
+          from: README.md
+          to: 1864533219
+          cloud: whitesource
+          user: ${{ secrets.CONFLUENCE_USER }}
+          token: ${{ secrets.CONFLUENCE_TOKEN }}
