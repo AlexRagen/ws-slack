@@ -44,16 +44,14 @@ jobs:
           cloud: whitesource
           user: ${{ secrets.CONFLUENCE_USER }}
           token: ${{ secrets.CONFLUENCE_TOKEN }}
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Prepare tag
         id: prep
         run: |
           DOCKER_IMAGE=whitesourcetools/ws4s
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             TAGS="${DOCKER_IMAGE}:latest"
+            VERSION=${GITHUB_REF#refs/tags/v}
+            TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
           else
             TAGS="${DOCKER_IMAGE}:testing"
           fi
