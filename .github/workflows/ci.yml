@@ -8,7 +8,7 @@ on:
   schedule:
     - cron: '0 4 * * *'
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -44,6 +44,9 @@ jobs:
           cloud: whitesource
           user: ${{ secrets.CONFLUENCE_USER }}
           token: ${{ secrets.CONFLUENCE_TOKEN }}
+  Docker:
+    runs-on: ubuntu-latest
+    steps:
       - name: Prepare tag
         id: prep
         run: |
@@ -72,4 +75,3 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-
