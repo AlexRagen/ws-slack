@@ -35,12 +35,21 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Unittesting
         run: python -m unittest
-      - name: confluence-markdown-sync
+      - name: confluence-markdown-sync - PS documentation
         if: github.ref == 'refs/heads/master'
         uses: cupcakearmy/confluence-markdown-sync@v1
         with:
           from: README.md
           to: 1864533219
+          cloud: whitesource
+          user: ${{ secrets.CONFLUENCE_USER }}
+          token: ${{ secrets.CONFLUENCE_TOKEN }}
+      - name: confluence-markdown-sync - Public Community
+        if: github.ref == 'refs/heads/master'
+        uses: cupcakearmy/confluence-markdown-sync@v1
+        with:
+          from: README.md
+          to: 2224554766
           cloud: whitesource
           user: ${{ secrets.CONFLUENCE_USER }}
           token: ${{ secrets.CONFLUENCE_TOKEN }}
@@ -76,20 +85,3 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
-      - name: confluence-markdown-sync
-        uses: cupcakearmy/confluence-markdown-sync@v1
-        with:
-          from: README.md
-          to: 2224554766
-          cloud: whitesource
-          user: ${{ secrets.CONFLUENCE_USER }}
-          token: ${{ secrets.CONFLUENCE_TOKEN }}
-      - name: confluence-markdown-sync
-        uses: cupcakearmy/confluence-markdown-sync@v1     
-        with: 
-          from: README.md
-          to: 1864533219
-          cloud: whitesource
-          user: ${{ secrets.CONFLUENCE_USER }}
-          token: ${{ secrets.CONFLUENCE_TOKEN }}
-        
