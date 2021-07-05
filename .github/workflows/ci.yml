@@ -52,9 +52,10 @@ jobs:
         run: |
           DOCKER_IMAGE=whitesourcetools/ws4s
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            TAGS="${DOCKER_IMAGE}:latest"
             VERSION=${GITHUB_REF#refs/tags/v}
-            TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
+            TAGS="${DOCKER_IMAGE}:${VERSION}"
+          elif [[ $GITHUB_REF == refs/heads/master ]]; then
+            TAGS="${DOCKER_IMAGE}:latest"
           else
             TAGS="${DOCKER_IMAGE}:testing"
           fi
@@ -91,3 +92,4 @@ jobs:
           cloud: whitesource
           user: ${{ secrets.CONFLUENCE_USER }}
           token: ${{ secrets.CONFLUENCE_TOKEN }}
+        
