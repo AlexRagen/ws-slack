@@ -8,7 +8,8 @@ class WsResources:
     def __init__(self):
         self.ws_cust_connector = WS(url=os.environ.get('WS_URL'),
                                     user_key=os.environ.get('WS_USER_KEY'),
-                                    token=os.environ.get('WS_ORG_TOKEN'))
+                                    token=os.environ.get('WS_ORG_TOKEN'),
+                                    tool_details=("ps-slack", "0"))
 
     def is_email_exists_in_ws(self, slack_email: str) -> bool:
         ws_user = None

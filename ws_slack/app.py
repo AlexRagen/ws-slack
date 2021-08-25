@@ -27,8 +27,10 @@ app = App()
 app_handler = SlackRequestHandler(app)
 api = FastAPI(title="WS4S",  swagger_static={"favicon": "favicon.png"})
 # api.mount("/static", StaticFiles(directory="static"), name="static")
-f = open("config.json", 'r')
-config = json.loads(f.read())
+
+with open("config.json", 'r') as f:
+    config = json.loads(f.read())
+
 HOW_TO_USE_SLASH_BLOCK = f"""Usage: /ws4s <report name> <scope token>
                           Currently supported reports: {config['Reports']}
                           To get Scope tokens: /ws4s tokens <scope name> 
