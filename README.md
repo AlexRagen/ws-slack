@@ -35,7 +35,7 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
     ```
 
 ## Prerequisites
-1. Create Custom App in [Slack API](https://api.slack.com/apps?new_app=1) with the following permissions:
+1. Create a Custom App in [Slack API](https://api.slack.com/apps?new_app=1) with the following permissions:
     * Slash commands:
         * Command: /ws4s
         * Request URL: https://<PUBLIC URL>/slack/commands
@@ -46,7 +46,7 @@ _Note: Reports will be written into a dedicated channel in form of: ws\_\_[SCOPE
         * App Display Name:
             * Display Name: WS4S
             * Default username: ws4s
-1. In Slack application, add WS4S by choosing WS4S in Apps.
+1. In the Slack application, add WS4S by choosing WS4S in Apps.
     
 ## Docker Installation and Run options
 * Install the container from DockerHub:
